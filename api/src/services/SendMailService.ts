@@ -1,10 +1,13 @@
 import nodemailer, { Transporter } from "nodemailer";
+import { resolve } from 'path';
+import handlebars from 'handlebars';
+import fs from 'fs';
 
 
 class SendMailService {
     private client: Transporter
     constructor() {
-        nodemailer.createTestAccount().then((account => {
+        nodemailer.createTestAccount().then(account => {
             const transporter = nodemailer.createTransport({
                 host: "smtp.ethereal.email",
                 port: 587,
@@ -16,21 +19,30 @@ class SendMailService {
             });
 
             this.client = transporter;
-        })).catch()
+        });
     }
 
     async execute(to: string, subject: string, body: string) {
+        const npsPath = resolve(__dirname, "..", "views", "emails", "npsEmail.hbs");
+        const templateFileContent = fs.readFileSync(npsPath).toString("utf8");
+
+        const mailTemplateParse = handlebars.compile(templateFileContent)
+
+        const html = mailTemplateParse({
+            name: to,
+            title: subject,
+            description: body
+        })
+
         const message = await this.client.sendMail({
             to,
             subject,
-            html: body,
+            html,
             from: "NPS <noreplay@nps.com.br>"
         });
 
         console.log("Message sent: %s", message.messageId);
-        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
-        // Preview only available when sending through an Ethereal account
         console.log("Preview URL: %s", nodemailer.getTestMessageUrl(message));
 
     }
