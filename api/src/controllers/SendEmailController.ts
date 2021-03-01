@@ -1,4 +1,5 @@
-import { Request, Response } from "express"
+import { Request, Response } from "express";
+import { resolve } from "path";
 import { getCustomRepository } from "typeorm";
 import { SurveysRepository } from "../repositories/SurveysRepository";
 import { SurveysUserRepositoty } from "../repositories/SurveysUserRepository";
@@ -15,17 +16,17 @@ class SendEmailController {
         const surveysRepository = getCustomRepository(SurveysRepository);
         const surveysUserRepository = getCustomRepository(SurveysUserRepositoty);
 
-        const userAlreadyExists = await usersRepository.findOne({ email });
+        const user = await usersRepository.findOne({ email });
 
-        if (!userAlreadyExists) {
+        if (!user) {
             return response.status(400).json({
                 error: "User does not exists",
             })
         }
 
-        const surveyAlreadyExists = await surveysRepository.findOne({ id: survey_id })
+        const survey = await surveysRepository.findOne({ id: survey_id })
 
-        if (!surveyAlreadyExists) {
+        if (!survey) {
             return response.status(400).json({
                 error: "Survey does not exists!"
             })
@@ -33,18 +34,27 @@ class SendEmailController {
 
         //Salvar Informações no banco
         const surveyUser = surveysUserRepository.create({
-            user_id: userAlreadyExists.id,
+            user_id: user.id,
             survey_id
         });
 
         await surveysUserRepository.save(surveyUser);
         //Enviar e-mail para usuário
 
-        await SendMailService.execute(email, surveyAlreadyExists.title, surveyAlreadyExists.description)
+        const npsPath = resolve(__dirname, "..", "views", "emails", "npsEmail.hbs");
+
+        const variables = {
+            name: user.name,
+            title: survey.title,
+            description: survey.description
+        }
+
+
+        await SendMailService.execute(email, survey.title, variables, npsPath)
 
         return response.json(surveyUser);
 
     }
 }
 
-export { SendEmailController }
+export { SendEmailController };
