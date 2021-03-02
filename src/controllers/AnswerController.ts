@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
-import { SurveysUserRepositoty } from '../repositories/SurveysUserRepository';
+import { SurveysUserRepository } from '../repositories/SurveysUserRepository';
 
 
 class AnswerController {
@@ -9,7 +9,7 @@ class AnswerController {
         const { u } = request.query;
 
         //  Ta listando os dados
-        const surveysUsersRepository = getCustomRepository(SurveysUserRepositoty);
+        const surveysUsersRepository = getCustomRepository(SurveysUserRepository);
 
         // faz um where no id do servey user da requisição
         const surveyUser = await surveysUsersRepository.findOne({

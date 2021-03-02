@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { resolve } from "path";
 import { getCustomRepository } from "typeorm";
 import { SurveysRepository } from "../repositories/SurveysRepository";
-import { SurveysUserRepositoty } from "../repositories/SurveysUserRepository";
+import { SurveysUserRepository } from "../repositories/SurveysUserRepository";
 import { UsersRepository } from "../repositories/UsersRepository";
 import SendMailService from "../services/SendMailService";
 
@@ -14,7 +14,7 @@ class SendEmailController {
 
         const usersRepository = getCustomRepository(UsersRepository);
         const surveysRepository = getCustomRepository(SurveysRepository);
-        const surveysUserRepository = getCustomRepository(SurveysUserRepositoty);
+        const surveysUserRepository = getCustomRepository(SurveysUserRepository);
 
         const user = await usersRepository.findOne({ email });
 
