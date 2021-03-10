@@ -46,6 +46,7 @@ Esse projeto foi desenvolvido durante a trilha de NodeJS, na quarta edição da 
 - Clone o repositório
 - Instale as dependências com `yarn`
 - Inicie o servidor com `yarn dev`
+- Para Rodar os tests com `yarn test`
 
 A aplicação pode ser acessada em [`localhost:3333`](http://localhost:3333).
 
